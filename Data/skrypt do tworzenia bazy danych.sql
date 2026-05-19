@@ -23,3 +23,9 @@ insert into Narzedzia(Nazwa, Opis, Mebel_id) values ('Młotek', 'Standardowy mł
 insert into Narzedzia(Nazwa, Opis, Mebel_id) values ('Śrubokręt', 'Płaski śrubokręt', 1);
 
 drop database warsztat;
+
+create user 'warsztat_webapp'@'localhost' identified by 'HasloAplikacji';
+
+grant all privileges on warsztat.* to 'warsztat_webapp'@'localhost';
+
+flush privileges;
