@@ -1,6 +1,7 @@
 using Warsztat.Components;
 using Microsoft.EntityFrameworkCore;
 using Warsztat.Data;
+using Warsztat.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ builder.Services.AddDbContext<WarsztatContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
     ));
+
+builder.Services.AddScoped<MebelService>();
+builder.Services.AddScoped<NarzedzieService>();
 
 
 var app = builder.Build();
