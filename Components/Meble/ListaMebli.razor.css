@@ -1,0 +1,158 @@
+﻿.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+    .page-header h1 {
+        margin: 0;
+    }
+
+/* ---------------- FORMULARZ ---------------- */
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: white;
+    padding: 20px;
+    margin-bottom: 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+    .form-container input,
+    .form-container textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #dcdcdc;
+        border-radius: 10px;
+        font-size: 15px;
+        resize: vertical;
+        box-sizing: border-box;
+    }
+
+        .form-container input:focus,
+        .form-container textarea:focus {
+            outline: none;
+            border-color: #666;
+            box-shadow: 0 0 0 3px rgba(100,100,100,0.15);
+        }
+
+/* ---------------- BUTTONY ---------------- */
+
+.add-button,
+.save-button {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.add-button {
+    background-color: #222;
+    color: white;
+}
+
+    .add-button:hover {
+        background-color: #333;
+    }
+
+.save-button {
+    background-color: #2f7d46;
+    color: white;
+    align-self: flex-start;
+}
+
+    .save-button:hover {
+        background-color: #25673a;
+    }
+
+/* ---------------- LISTA MEBLI ---------------- */
+
+.furniture-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* ---------------- KARTA MEBLA ---------------- */
+
+.furniture-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    transition: transform 0.15s ease;
+}
+
+    .furniture-card:hover {
+        transform: translateY(-2px);
+    }
+
+    /* ---------------- HEADER KARTY ---------------- */
+
+    .furniture-card .furniture-header {
+        padding: 20px;
+        margin-bottom: 0;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .furniture-card .furniture-header:hover {
+            background-color: #f7f7f7;
+        }
+
+    .furniture-card h2 {
+        margin: 0;
+        font-size: 20px;
+    }
+
+    .furniture-card p {
+        margin-top: 8px;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .tool-count {
+        font-size: 14px;
+        color: #777;
+        font-weight: normal;
+    }
+/* ---------------- ZAWARTOŚĆ ---------------- */
+.furniture-content {
+    padding: 20px;
+    border-top: 1px solid #ececec;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ---------------- NARZĘDZIA ---------------- */
+
+.tool-item {
+    background: white;
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid #ececec;
+    transition: 0.2s;
+}
+
+    .tool-item:hover {
+        border-color: #ccc;
+    }
+
+.tool-name {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.tool-description {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+}

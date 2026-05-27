@@ -1,0 +1,173 @@
+﻿@using Warsztat.Models
+@using Microsoft.EntityFrameworkCore
+@inject WarsztatContext DbContext
+
+<div class="tools-header">
+
+    <h1>Narzędzia</h1>
+
+    <button type="button" class="add-button" @onclick="ToggleForm">
+        + Dodaj
+    </button>
+
+</div>
+
+@if (showForm)
+{
+    <div class="form-container">
+
+        <input type="text"
+               placeholder="Nazwa narzędzia"
+               @bind="noweNarzedzie.Nazwa" />
+
+        <textarea placeholder="Opis"
+                  @bind="noweNarzedzie.Opis">
+        </textarea>
+
+        <select @bind="noweNarzedzie.Mebel_ID">
+
+            <option value="">-- wybierz mebel --</option>
+
+            @foreach (var mebel in meble)
+            {
+                <option value="@mebel.ID">
+                    @mebel.Nazwa
+                </option>
+            }
+
+        </select>
+
+        @if (wybranyMebel != null && !string.IsNullOrWhiteSpace(wybranyMebel.Opis))
+        {
+            <div class="mebel-description">
+
+                <div class="description-title">
+                    Opis mebla
+                </div>
+
+                <div class="description-content">
+                    @wybranyMebel.Opis
+                </div>
+
+            </div>
+        }
+
+        <button class="save-button"
+                @onclick="AddTool">
+            Zapisz
+        </button>
+
+    </div>
+}
+
+<div class="tools-list">
+
+    @if (narzedzia.Count == 0)
+    {
+        <p>Brak narzędzi.</p>
+    }
+    else
+    {
+        @foreach (var narzedzie in narzedzia)
+        {
+            <div class="tool-card">
+
+                <div class="tool-card-header">
+
+                    <h3>@narzedzie.Nazwa</h3>
+
+                    <button class="delete-button"
+                            @onclick="() => DeleteTool(narzedzie.ID)">
+                        Usuń
+                    </button>
+
+                </div>
+
+                @if(!string.IsNullOrWhiteSpace(narzedzie.Opis)){
+                    <p>@narzedzie.Opis</p>
+                }
+
+                <div class="tool-location">
+
+                    @if (narzedzie.Mebel != null)
+                    {
+                        <span class="mebel-badge">
+                            @narzedzie.Mebel.Nazwa
+                        </span>
+                    }
+                    else
+                    {
+                        <span>Nie przypisano mebla</span>
+                    }
+
+                </div>
+
+            </div>
+        }
+    }
+
+</div>
+
+@code {
+
+    private List<Narzedzie> narzedzia { get; set; } = new();
+
+    private List<Mebel> meble {get; set;} = new();
+
+    private Mebel? wybranyMebel => meble.FirstOrDefault(m => m.ID == noweNarzedzie.Mebel_ID);
+
+    private Narzedzie noweNarzedzie { get; set; } = new();
+
+    private bool showForm { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        narzedzia = await DbContext.Narzedzia
+            .Include(t => t.Mebel)
+            .ToListAsync();
+
+        meble = await DbContext.Meble.ToListAsync();
+    }
+
+    private void ToggleForm()
+    {
+        showForm = !showForm;
+    }
+
+    private async Task AddTool()
+    {
+        if (string.IsNullOrWhiteSpace(noweNarzedzie.Nazwa))
+        {
+            return;
+        }
+
+        DbContext.Narzedzia.Add(noweNarzedzie);
+
+        await DbContext.SaveChangesAsync();
+
+        noweNarzedzie = new();
+
+        await LoadData();
+
+        showForm = false;
+    }
+
+    private async Task DeleteTool(int id)
+    {
+        var narzedzie = await DbContext.Narzedzia.FindAsync(id);
+
+        if (narzedzie != null)
+        {
+            DbContext.Narzedzia.Remove(narzedzie);
+
+            await DbContext.SaveChangesAsync();
+
+            await LoadData();
+        }
+    }
+}
