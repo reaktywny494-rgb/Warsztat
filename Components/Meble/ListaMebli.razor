@@ -1,6 +1,11 @@
 ﻿@using Warsztat.Models
 @using Microsoft.EntityFrameworkCore
+
 @inject WarsztatContext DbContext
+@inject AppState AppState
+@inject IJSRuntime JS
+
+@implements IDisposable
 
 <div class="page-header">
 
@@ -25,8 +30,8 @@
         </textarea>
 
         <button class="save-button"
-                @onclick="AddFurniture">
-            Zapisz
+                @onclick="SaveFurniture">
+            @(nowyMebel.ID == 0 ? "Dodaj" : "Zapisz zmiany")
         </button>
 
     </div>
@@ -36,24 +41,42 @@
 
     @foreach (var mebel in meble)
     {
-        <div class="furniture-card">
+        <div id="furniture-@mebel.ID"
+            class="furniture-card @(highlightFurnitureId == mebel.ID ? "highlight" : "")">
 
-            <div class="furniture-header"
-                @onclick="() => ToggleFurniture(mebel.ID)">
-            
-                <div>
-                    <h2>
-                        @mebel.Nazwa
-                        <span class="tool-count">
-                            (@mebel.Narzedzia.Count())
-                        </span>
-                    </h2>
-                    <p>@mebel.Opis</p>
+            <div class="furniture-header">
+
+                <div class="furniture-info"
+                    @onclick="() => ToggleFurniture(mebel.ID)">
+
+                    <div>
+                        <h2>
+                            @mebel.Nazwa
+
+                            <span class="tool-count">
+                                (@mebel.Narzedzia.Count())
+                            </span>
+                        </h2>
+                        
+                        <p>@mebel.Opis</p>
+                    </div>
+
+                    <span class="expand-icon">
+                        @(expandedFurnitureID == mebel.ID ? "▼" : "▶")
+                    </span>
+
                 </div>
 
-                <span>
-                    @(expandedFurnitureID == mebel.ID ? "▼" : "▶")
-                </span>
+                <button type="button"
+                    class="delete-button"
+                    @onclick="() => DeleteFurniture(mebel.ID)">
+                        Usuń
+                </button>
+
+                <button class="edit-button"
+                        @onclick="() => EditFurniture(mebel)">
+                    Edytuj
+                </button>
             
             </div>
 
@@ -90,75 +113,3 @@
     }
 
 </div>
-
-@code {
-
-    private List<Mebel> meble {get; set;} = new();
-
-    private Mebel nowyMebel { get; set; } = new();
-
-    private bool showForm { get; set; } = false;
-
-    private int? expandedFurnitureID { get; set; } = null;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-
-    private async Task LoadData()
-    {
-        meble = await DbContext.Meble
-            .Include(m => m.Narzedzia)
-            .ToListAsync();
-    }
-
-    private void ToggleForm()
-    {
-        showForm = !showForm;
-    }
-
-    private async Task AddFurniture()
-    {
-        if (string.IsNullOrWhiteSpace(nowyMebel.Nazwa))
-        {
-            return;
-        }
-
-        DbContext.Meble.Add(nowyMebel);
-
-        await DbContext.SaveChangesAsync();
-
-        nowyMebel = new();
-
-        await LoadData();
-
-        showForm = false;
-    }
-
-    private async Task DeleteFurniture(int id)
-    {
-        var mebel = await DbContext.Meble.FindAsync(id);
-
-        if (mebel != null)
-        {
-            DbContext.Meble.Remove(mebel);
-
-            await DbContext.SaveChangesAsync();
-
-            await LoadData();
-        }
-    }
-
-    private void ToggleFurniture(int id)
-    {
-        if (expandedFurnitureID == id)
-        {
-            expandedFurnitureID = null;
-        }
-        else
-        {
-            expandedFurnitureID = id;
-        }
-    }
-}

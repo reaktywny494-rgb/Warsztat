@@ -17,6 +17,7 @@ builder.Services.AddDbContext<WarsztatContext>(options =>
 
 builder.Services.AddScoped<MebelService>();
 builder.Services.AddScoped<NarzedzieService>();
+builder.Services.AddScoped<AppState>();
 
 
 var app = builder.Build();

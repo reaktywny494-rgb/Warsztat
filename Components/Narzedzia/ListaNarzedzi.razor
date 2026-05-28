@@ -1,6 +1,11 @@
 ﻿@using Warsztat.Models
 @using Microsoft.EntityFrameworkCore
+
 @inject WarsztatContext DbContext
+@inject AppState AppState
+@inject IJSRuntime JS
+
+@implements IDisposable
 
 <div class="tools-header">
 
@@ -53,8 +58,8 @@
         }
 
         <button class="save-button"
-                @onclick="AddTool">
-            Zapisz
+                @onclick="SaveTool">
+            @(noweNarzedzie.ID == 0 ? "Dodaj" : "Zapisz zmiany")
         </button>
 
     </div>
@@ -70,16 +75,26 @@
     {
         @foreach (var narzedzie in narzedzia)
         {
-            <div class="tool-card">
+            <div id="tool-@narzedzie.ID"
+                class="tool-card @(highlightToolId == narzedzie.ID ? "highlight" : "")">
 
                 <div class="tool-card-header">
 
                     <h3>@narzedzie.Nazwa</h3>
 
-                    <button class="delete-button"
-                            @onclick="() => DeleteTool(narzedzie.ID)">
-                        Usuń
-                    </button>
+                    <div class="tool-actions">
+
+                        <button class="delete-button"
+                                @onclick="() => DeleteTool(narzedzie.ID)">
+                            Usuń
+                        </button>
+
+                        <button class="edit-button"
+                                @onclick="() => EditTool(narzedzie)">
+                            Edytuj
+                        </button>
+
+                    </div> 
 
                 </div>
 
@@ -107,67 +122,3 @@
     }
 
 </div>
-
-@code {
-
-    private List<Narzedzie> narzedzia { get; set; } = new();
-
-    private List<Mebel> meble {get; set;} = new();
-
-    private Mebel? wybranyMebel => meble.FirstOrDefault(m => m.ID == noweNarzedzie.Mebel_ID);
-
-    private Narzedzie noweNarzedzie { get; set; } = new();
-
-    private bool showForm { get; set; } = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-
-    private async Task LoadData()
-    {
-        narzedzia = await DbContext.Narzedzia
-            .Include(t => t.Mebel)
-            .ToListAsync();
-
-        meble = await DbContext.Meble.ToListAsync();
-    }
-
-    private void ToggleForm()
-    {
-        showForm = !showForm;
-    }
-
-    private async Task AddTool()
-    {
-        if (string.IsNullOrWhiteSpace(noweNarzedzie.Nazwa))
-        {
-            return;
-        }
-
-        DbContext.Narzedzia.Add(noweNarzedzie);
-
-        await DbContext.SaveChangesAsync();
-
-        noweNarzedzie = new();
-
-        await LoadData();
-
-        showForm = false;
-    }
-
-    private async Task DeleteTool(int id)
-    {
-        var narzedzie = await DbContext.Narzedzia.FindAsync(id);
-
-        if (narzedzie != null)
-        {
-            DbContext.Narzedzia.Remove(narzedzie);
-
-            await DbContext.SaveChangesAsync();
-
-            await LoadData();
-        }
-    }
-}

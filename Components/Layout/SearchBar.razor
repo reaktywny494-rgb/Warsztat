@@ -1,3 +1,43 @@
-﻿<input type="text"
+﻿@using Microsoft.EntityFrameworkCore
+@using Warsztat.Models
+
+@inject WarsztatContext DbContext
+@inject NavigationManager Nav
+@inject AppState AppState
+
+@rendermode InteractiveServer
+
+<div class="search-container">
+
+	<input class="search-input"
+		type="text"
 		placeholder="Szukaj.."
-		class="search-input" />
+
+	    value="@searchText"
+        
+        @oninput="HandleSearch" />
+
+	@if(results.Any())
+    {
+        <div class="search-results">
+
+            @foreach(var result in results)
+            {
+                <div class="search-result-item"
+                    @onclick="() => Navigate(result)">
+
+                    <span class="result-type">
+                        @(result.Type == "tool" ? "🛠" : "📦")
+                    </span>
+
+                    <span>
+                        @result.Title
+                    </span>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

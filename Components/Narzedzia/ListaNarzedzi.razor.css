@@ -111,6 +111,22 @@
         background-color: #962929;
     }
 
+.edit-button {
+    border: none;
+    background-color: #444;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-left: 8px;
+    transition: 0.2s;
+}
+
+    .edit-button:hover {
+        background-color: #222;
+    }
+
 /* ---------------- LISTA ---------------- */
 
 .tools-list {
@@ -133,19 +149,33 @@
         transform: translateY(-2px);
     }
 
+    .tool-card.highlight {
+        border: 2px solid #2f7d46;
+        box-shadow: 0 0 0 3px rgba(47,125,70,0.2);
+        transform: translateY(-2px) scale(1.01);
+        transition: 0.2s;
+    }
+
 /* ---------------- HEADER KARTY ---------------- */
 
 .tool-card-header {
     display: flex;
     justify-content: space-between;
+    gap: 16px;
     align-items: center;
     margin-bottom: 14px;
 }
 
-    .tool-card-header h3 {
-        margin: 0;
-        font-size: 20px;
-    }
+.tool-card-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.tool-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
 
 /* ---------------- OPIS ---------------- */
 
